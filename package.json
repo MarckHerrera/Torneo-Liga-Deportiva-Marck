@@ -1,0 +1,29 @@
+{
+  "name": "torneo-liga-deportiva-marck",
+  "version": "1.0.0",
+  "description": "Proyecto de Node Js  para llevar el Control de un Torneo Deportivo",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MarckHerrera/Torneo-Liga-Deportiva-Marck.git"
+  },
+  "author": "Marck Herrera",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MarckHerrera/Torneo-Liga-Deportiva-Marck/issues"
+  },
+  "homepage": "https://github.com/MarckHerrera/Torneo-Liga-Deportiva-Marck#readme",
+  "dependencies": {
+    "bcrypt-nodejs": "^0.0.3",
+    "cors": "^2.8.5",
+    "express": "^4.18.1",
+    "jwt-simple": "^0.5.6",
+    "moment": "^2.29.3",
+    "mongoose": "^6.3.2",
+    "nodemon": "^2.0.16",
+    "pdfkit": "^0.13.0"
+  }
+}
