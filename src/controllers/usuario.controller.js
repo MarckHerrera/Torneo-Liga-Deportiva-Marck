@@ -111,6 +111,7 @@ function adminDefault() {
   /*Fin Funciones admin para usuarios */
 /* Fin de funciones admin */
 
+/* Funciones de TODOS */
   function registrarUsuario(req, res) {
     var modeloUsuario = new Usuario();
     var parametros = req.body;
@@ -279,7 +280,7 @@ function adminDefault() {
       return res.status(200).send({ usuario: UsuarioEliminado });
     });
   }
-
+/* Fin Funciones de TODOS */
   
   
 
