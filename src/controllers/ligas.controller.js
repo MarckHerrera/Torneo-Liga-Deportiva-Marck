@@ -35,6 +35,12 @@ function registrarLigas(req, res) {
     var idLiga = req.params.idLiga;
     var parametros = req.body;
     
+    Ligas.find({ nombre: parametros.nombre }, (err, ligaEncontrado) => {
+        if (ligaEncontrado.length > 0) {
+          return res.status(500).send({ message: "Ya existe esta Liga"});
+          
+        } else {
+
     Ligas.findOne({_id: idLiga ,idUsuario: req.user.sub }, (err, ligaEncontrado) => {
     if (!ligaEncontrado){ 
         return res.status(500).send({mensaje: "Esta Liga no es tuya"})
@@ -62,6 +68,8 @@ function registrarLigas(req, res) {
 
     }
     });
+}
+});
   }
 
   function eliminarLigas(req, res) {

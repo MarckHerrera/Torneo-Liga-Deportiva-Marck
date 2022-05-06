@@ -72,6 +72,12 @@ function adminDefault() {
     var idTorneo = req.params.idTorneo;
     var parametros = req.body;
   
+    Torneos.find({ nombre: parametros.nombre }, (err, torneoEncontrado) => {
+      if (torneoEncontrado.length > 0) {
+        return res.status(500).send({ message: "Ya existe este Torneo"});
+        
+      } else {
+
         Torneos.findByIdAndUpdate(
           idTorneo,
           {
@@ -88,6 +94,10 @@ function adminDefault() {
             return res.status(200).send({ torneo: torneoActualizado });
           }
         );
+
+      }
+        });
+      
   }
 
   function eliminarTorneos(req, res) {
@@ -213,6 +223,13 @@ function adminDefault() {
   function editarUsuarios(req, res) {
     var idUser = req.params.idUser;
     var parametros = req.body;
+
+
+      Usuario.find({ nombre: parametros.nombre }, (err, usuarioEncontrado) => {
+        if (usuarioEncontrado.length > 0) {
+          return res.status(500).send({ message: "Ya existe este Usuario"});
+          
+        } else {
   
     Usuario.findOne({ _id: idUser }, (err, usuarioEncontrado) => {
       if (req.user.rol == "ROL_ADMIN") {
@@ -258,6 +275,10 @@ function adminDefault() {
         );
       }
     });
+    
+  }
+});
+
   }
 
   function eliminarUsuarios(req, res) {
