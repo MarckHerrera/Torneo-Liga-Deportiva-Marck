@@ -13,6 +13,7 @@ function registrarEquipos(req, res) {
         
       } else {
         
+        
         Equipos.find({ idLiga: idLiga }, (err, equiposLiga) => {
 
         if (equiposLiga.length >= 10) {
@@ -35,6 +36,7 @@ function registrarEquipos(req, res) {
             return res.status(200).send({equipo: equipoGuardado});
           });
         }
+
         })  
       }
     });
@@ -49,6 +51,7 @@ function registrarEquipos(req, res) {
     var idEquipo = req.params.idEquipo;
     var parametros = req.body;
     
+    if(parametros.nombre) {
     Equipos.find({ nombre: parametros.nombre }, (err, equipoEncontrado) => {
         if (equipoEncontrado.length > 0) {
           return res.status(500).send({ message: "Ya existe este Equipo"});
@@ -83,6 +86,9 @@ function registrarEquipos(req, res) {
     });
 }
 });
+}else{
+  return res.status(500).send({mensaje: "Debe enviar los parametros obligatorios"})
+}
   }
 
   function eliminarEquipos(req, res) {

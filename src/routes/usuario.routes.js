@@ -2,6 +2,7 @@ const express = require('express');
 const controladorUsuario = require('../controllers/usuario.controller');
 const controladorLigas = require('../controllers/ligas.controller');
 const controladorEquipos = require('../controllers/equipos.controller');
+const controladorJornadas = require('../controllers/jornadas.controller')
 
 /* Middlewares */
 const md_auth = require('../middlewares/autenticacion');
@@ -19,16 +20,11 @@ api.delete('/eliminarUsuario/:idUser',md_auth.Auth, controladorUsuario.eliminarU
     /* Especificas del Admin Usuarios */
 api.post('/registarAdmin',[md_auth.Auth, md_roles.administrador], controladorUsuario.registrarAdmin);
 api.get('/mostrarUsuarios',[md_auth.Auth, md_roles.administrador], controladorUsuario.mostrarUsuarios);
-    /* Especificas del Admin Torneos */
-api.post('/registrarTorneo',[md_auth.Auth, md_roles.administrador], controladorUsuario.registrarTorneos);
-api.put('/editarTorneo/:idTorneo',[md_auth.Auth, md_roles.administrador], controladorUsuario.editarTorneos);
-api.delete('/eliminarTorneo/:idTorneo',[md_auth.Auth, md_roles.administrador], controladorUsuario.eliminarTorneos);
-api.get('/mostrarTorneos',[md_auth.Auth, md_roles.administrador], controladorUsuario.mostrarTorneos);
 
 /* Especificas del Usuario */
     /* Especificas del Usuario Ligas */
-api.post('/registrarLiga/:idTorneo',[md_auth.Auth, md_roles.usuarios], controladorLigas.registrarLigas);
-api.put('/editarLiga/:idLiga',[md_auth.Auth, md_roles.usuarios], controladorLigas.editarLigas);
+api.post('/registrarLiga',md_auth.Auth, controladorLigas.registrarLigas);
+api.put('/editarLiga/:idLiga',md_auth.Auth, controladorLigas.editarLigas);
 api.delete('/eliminarLiga/:idLiga',[md_auth.Auth, md_roles.usuarios], controladorLigas.eliminarLigas);
 api.get('/mostrarLigas',[md_auth.Auth, md_roles.usuarios], controladorLigas.mostrarLigas);
     /* Especificas del Usuario Equipos */
@@ -37,4 +33,7 @@ api.put('/editarEquipo/:idEquipo',[md_auth.Auth, md_roles.usuarios], controlador
 api.delete('/eliminarEquipo/:idEquipo',[md_auth.Auth, md_roles.usuarios], controladorEquipos.eliminarEquipos);
 api.get('/mostrarEquipos',[md_auth.Auth, md_roles.usuarios], controladorEquipos.mostrarEquipos);
 api.get('/mostrarEquiposLiga/:idLiga',[md_auth.Auth, md_roles.usuarios], controladorEquipos.mostrarEquiposLiga);
+    /* Especificas del Usuario Jornadas */
+api.post('/registrarJornada/:idLiga',[md_auth.Auth, md_roles.usuarios],controladorJornadas.registrarJornadas);
+api.put('/agregarPartido/:idJornada',[md_auth.Auth, md_roles.usuarios],controladorJornadas.agregarPartido);
 module.exports = api;

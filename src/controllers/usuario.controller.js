@@ -1,5 +1,4 @@
 const Usuario = require("../models/usuario.model");
-const Torneos = require("../models/torneos.model");
 const bcrypt = require("bcrypt-nodejs");
 const jwt = require("../services/jwt");
 
@@ -39,85 +38,7 @@ function adminDefault() {
     })
   }
   
-  /* Funciones admin para torneos */
-  function registrarTorneos(req, res) {
-    var modeloTorneos = new Torneos();
-    var parametros = req.body;
   
-    if(parametros.nombre) {
-        
-    Torneos.find({ nombre: parametros.nombre }, (err, torneoEncontrado) => {
-      if (torneoEncontrado.length > 0) {
-        return res.status(500).send({ message: "Ya existe este torneo"});
-        
-      } else {
-        modeloTorneos.nombre = parametros.nombre;
-        modeloTorneos.idUsuario = req.user.sub;
-  
-          modeloTorneos.save((err, torneoGuardado) => {
-            if (err) return res.status(500).send({mensaje: "Error en la peticion"});
-            if (!torneoGuardado) return res.status(500).send({mensaje: "Error al registrarTorneo"});
-  
-            return res.status(200).send({torneo: torneoGuardado});
-          });
-      }
-    });
-}else{
-    return res.status(500).send({mensaje: "Debe enviar los parametros obligatorios"})
-}
-
-  }
-
-  function editarTorneos(req, res) {
-    var idTorneo = req.params.idTorneo;
-    var parametros = req.body;
-  
-    Torneos.find({ nombre: parametros.nombre }, (err, torneoEncontrado) => {
-      if (torneoEncontrado.length > 0) {
-        return res.status(500).send({ message: "Ya existe este Torneo"});
-        
-      } else {
-
-        Torneos.findByIdAndUpdate(
-          idTorneo,
-          {
-            $set: {
-              nombre: parametros.nombre
-            },
-          },
-          { new: true },
-          (err, torneoActualizado) => {
-            if (err)
-              return res.status(500).send({ mensaje: "Error en la peticion de editar torneo" });
-            if (!torneoActualizado)
-              return res.status(500).send({ mensaje: "Error al editar torneo" });
-            return res.status(200).send({ torneo: torneoActualizado });
-          }
-        );
-
-      }
-        });
-      
-  }
-
-  function eliminarTorneos(req, res) {
-    var idTorneo = req.params.idTorneo;
-  
-    Torneos.findByIdAndDelete(idTorneo, (err, torneoEliminado) => {
-      if (err) return res.status(500).send({ mensaje: "Error en la peticion" });
-      if (!torneoEliminado)
-        return res.status(500).send({ mensaje: "Error al eliminar el Torneo" });
-  
-      return res.status(200).send({ torneo: torneoEliminado });
-    });
-  }
-
-  function mostrarTorneos(req, res) {
-    Torneos.find({}, (err, torneoEncontrado) => {
-      return res.status(200).send({torneo: torneoEncontrado});
-    })
-  }
-  /* Fin Funciones admin para torneos */
   /*Fin Funciones admin para usuarios */
 /* Fin de funciones admin */
 
@@ -314,10 +235,5 @@ module.exports = {
     eliminarUsuarios,
 
     registrarAdmin,
-    mostrarUsuarios,
-
-    registrarTorneos,
-    editarTorneos,
-    eliminarTorneos,
-    mostrarTorneos
+    mostrarUsuarios
 };
