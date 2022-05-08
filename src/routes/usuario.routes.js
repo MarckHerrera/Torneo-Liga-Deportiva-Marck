@@ -36,4 +36,6 @@ api.get('/mostrarEquiposLiga/:idLiga',[md_auth.Auth, md_roles.usuarios], control
     /* Especificas del Usuario Jornadas */
 api.post('/registrarJornada/:idLiga',[md_auth.Auth, md_roles.usuarios],controladorJornadas.registrarJornadas);
 api.put('/agregarPartido/:idJornada',[md_auth.Auth, md_roles.usuarios],controladorJornadas.agregarPartido);
+    /* Especificas del Usuario Tabla */
+api.get('/tablaGeneral/:idLiga',[md_auth.Auth, md_roles.usuarios], controladorJornadas.tablaGeneral);
 module.exports = api;

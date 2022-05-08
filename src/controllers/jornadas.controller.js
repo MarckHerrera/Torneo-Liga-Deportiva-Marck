@@ -245,7 +245,24 @@ function agregarPartido(req, res) {
     }
 }
 
+function tablaGeneral(req, res) {
+    var idLiga = req.params.idLiga;
+
+    Equipos.findOne({idUsuario: req.user.sub }, (err, equipoEncontrado) => {
+        if (!equipoEncontrado){ 
+            return res.status(500).send({mensaje: "Este equipo no es tuyo"})
+            
+        } else {
+
+    Equipos.find({idLiga: idLiga },{idLiga:0,idUsuario:0,_id:0,__v:0}, (err, equipoEncontrado) => {
+      return res.status(200).send({equipo: equipoEncontrado});
+    }).sort({puntuaje:-1})
+}
+});
+}
+
 module.exports = {
     registrarJornadas,
-    agregarPartido
+    agregarPartido,
+    tablaGeneral
 }
