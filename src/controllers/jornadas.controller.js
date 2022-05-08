@@ -67,9 +67,12 @@ function registrarJornadas(req, res) {
 function agregarPartido(req, res) {
     var idJornada = req.params.idJornada;
     var parametros = req.body;
+    const golesUno = parametros.goles1;
+    const golesDos = parametros.goles2;
+    const diferencia1 = golesUno - golesDos;
+    const diferencia2 = golesDos - golesUno;
 
-    if (parametros.equipo1, parametros.equipo2) {
-
+    if (parametros.equipo1, parametros.equipo2, parametros.goles1, parametros.goles2) {
         Equipos.findOne({ nombre: parametros.equipo1 }, (err, equipo1Encontrado) => {
             if (!equipo1Encontrado) {
                 return res.status(500).send({ message: "equipo1 no encontrado" })
@@ -82,7 +85,6 @@ function agregarPartido(req, res) {
                     }
                     if (equipo2Encontrado == null) {
                     } else {
-
                         Jornadas.findOne({ _id: idJornada, partidos: { $elemMatch: { equipo1: parametros.equipo1 } } }, (err, nombrePartidoJornada) => {
                             if (nombrePartidoJornada) {
                                 return res.status(500).send({ message: "ya ha sido creado 1" })
@@ -96,8 +98,6 @@ function agregarPartido(req, res) {
                                     if (err) return res.status(500).send({ mensaje: 'error en la peticion' });
                                     if (!nombrePartidoJornada2) {
 
-
-
                                         Jornadas.findById(idJornada, { idLiga: 1, _id: 0 }, (err, idLigaJornada) => {
                                             Jornadas.findById(idJornada, { partidos: 1, _id: 0 }, (err, partidosJornada) => {
                                                 Equipos.find({ idLigaJornada }, (err, equiposLiga) => {
@@ -106,6 +106,7 @@ function agregarPartido(req, res) {
                                                         if (partidosJornada.partidos.length >= equiposLiga.length / 2) {
                                                             return res.status(500).send({ message: "Las jornadas deben terner una menos que el total de equipos si es par" });
                                                         } else {
+
                                                             Jornadas.findByIdAndUpdate(
                                                                 idJornada,
                                                                 {
@@ -113,6 +114,8 @@ function agregarPartido(req, res) {
                                                                         partidos: [{
                                                                             equipo1: parametros.equipo1,
                                                                             equipo2: parametros.equipo2,
+                                                                            goles1: parametros.goles1,
+                                                                            goles2: parametros.goles2,
                                                                         }]
                                                                     },
                                                                 },
@@ -122,7 +125,9 @@ function agregarPartido(req, res) {
                                                                         return res.status(500).send({ mensaje: "Error en la peticion de editar Jornada" });
                                                                     if (!jornadaActualizado)
                                                                         return res.status(500).send({ mensaje: "Error al editar Jornada" });
-                                                                    return res.status(200).send({ jornada: jornadaActualizado });
+                                                                    if (jornadaActualizado) {
+                                                                        return res.status(200).send({ jornada: jornadaActualizado });
+                                                                    }
                                                                 }
                                                             );
                                                         }
@@ -132,6 +137,7 @@ function agregarPartido(req, res) {
                                                             return res.status(500).send({ message: "Las jornadas deben terner la misma cantidad que los equipos si es impar" });
 
                                                         } else {
+
                                                             Jornadas.findByIdAndUpdate(
                                                                 idJornada,
                                                                 {
@@ -139,6 +145,8 @@ function agregarPartido(req, res) {
                                                                         partidos: [{
                                                                             equipo1: parametros.equipo1,
                                                                             equipo2: parametros.equipo2,
+                                                                            goles1: parametros.goles1,
+                                                                            goles2: parametros.goles2,
                                                                         }]
                                                                     },
                                                                 },
@@ -148,7 +156,69 @@ function agregarPartido(req, res) {
                                                                         return res.status(500).send({ mensaje: "Error en la peticion de editar Jornada" });
                                                                     if (!jornadaActualizado)
                                                                         return res.status(500).send({ mensaje: "Error al editar Jornada" });
-                                                                    return res.status(200).send({ jornada: jornadaActualizado });
+                                                                    // return res.status(200).send({ jornada:jornadaActualizado});
+                                                                    if (golesUno == golesDos) {//empate
+                                                                        let empate = 1;
+                                                                        Equipos.findOneAndUpdate({ nombre: parametros.equipo1 }, {
+                                                                            $inc: {
+                                                                                puntuaje: empate, golesAFavor: golesUno,
+                                                                                golesEnContra: golesDos, diferenciaDeGoles: diferencia1
+                                                                            }
+                                                                        }, { new: true }, (err, EquiposActualizado1) => {
+
+                                                                            //return res.status(200).send({ equipoafectado: EquiposActualizado1});
+                                                                            console.log({ equipoafectado: EquiposActualizado1 });
+                                                                            Equipos.findOneAndUpdate({ nombre: parametros.equipo2 }, {
+                                                                                $inc: {
+                                                                                    puntuaje: empate, golesAFavor: golesDos,
+                                                                                    golesEnContra: golesUno, diferenciaDeGoles: diferencia2
+                                                                                }
+                                                                            }, { new: true }, (err, EquiposActualizado2) => {
+
+                                                                                return res.status(200).send({ equipoafectados: EquiposActualizado1, EquiposActualizado2 });
+                                                                            })
+                                                                        })
+                                                                    } else if (golesUno > golesDos) { //gano equipo 1
+                                                                        let gano = 3;
+                                                                        let perdio = 0;
+                                                                        Equipos.findOneAndUpdate({ nombre: parametros.equipo1 }, {
+                                                                            $inc: {
+                                                                                puntuaje: gano, golesAFavor: golesUno,
+                                                                                golesEnContra: golesDos, diferenciaDeGoles: diferencia1
+                                                                            }
+                                                                        }, { new: true }, (err, EquiposActualizado1) => {
+                                                                            console.log({ equipoafectado: EquiposActualizado1 });
+                                                                            Equipos.findOneAndUpdate({ nombre: parametros.equipo2 }, {
+                                                                                $inc: {
+                                                                                    puntuaje: perdio, golesAFavor: golesDos,
+                                                                                    golesEnContra: golesUno, diferenciaDeGoles: diferencia2
+                                                                                }
+                                                                            }, { new: true }, (err, EquiposActualizado2) => {
+
+                                                                                return res.status(200).send({ equipoafectados: EquiposActualizado1, EquiposActualizado2 });
+                                                                            })
+                                                                        })
+                                                                    } else if (golesDos >= golesUno) {// gano equipo 2 
+                                                                        let gano = 3;
+                                                                        let perdio = 0;
+                                                                        Equipos.findOneAndUpdate({ nombre: parametros.equipo1 }, {
+                                                                            $inc: {
+                                                                                puntuaje: perdio, golesAFavor: golesUno,
+                                                                                golesEnContra: golesDos, diferenciaDeGoles: diferencia1
+                                                                            }
+                                                                        }, { new: true }, (err, EquiposActualizado1) => {
+                                                                            console.log({ equipoafectado: EquiposActualizado1 });
+                                                                            Equipos.findOneAndUpdate({ nombre: parametros.equipo2 }, {
+                                                                                $inc: {
+                                                                                    puntuaje: gano, golesAFavor: golesDos,
+                                                                                    golesEnContra: golesUno, diferenciaDeGoles: diferencia2
+                                                                                }
+                                                                            }, { new: true }, (err, EquiposActualizado2) => {
+
+                                                                                return res.status(200).send({ equipoafectados: EquiposActualizado1, EquiposActualizado2 });
+                                                                            })
+                                                                        })
+                                                                    }
                                                                 }
                                                             );
                                                         }

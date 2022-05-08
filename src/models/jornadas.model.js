@@ -7,7 +7,8 @@ const JornadasSchema = Schema({
     partidos: [{
             equipo1: String,
             equipo2: String,
-            marcador: String,
+            goles1: Number,
+            goles2: Number,
     }],
 })
 
