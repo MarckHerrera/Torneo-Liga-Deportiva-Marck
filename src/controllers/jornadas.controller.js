@@ -337,7 +337,7 @@ function tablitaPdf(req, res) {
     }).sort({puntuaje:-1})
 }
 });
-return res.status(200).send("PDF Generado");
+return res.status(200).send("Se creo un Pdf");
 }
 
 module.exports = {

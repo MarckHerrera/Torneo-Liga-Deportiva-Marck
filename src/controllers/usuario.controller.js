@@ -206,7 +206,7 @@ function adminDefault() {
     var idUser = req.params.idUser;
   
     if (req.user.rol !== "ROL_ADMIN") {
-      return res.status(500).send({ mensaje: "No tiene los permisos para eliminar Empresas." });
+      return res.status(500).send({ mensaje: "No tiene los permisos para eliminar Admins." });
     }
   
     if (req.user.sub == idUser) {
