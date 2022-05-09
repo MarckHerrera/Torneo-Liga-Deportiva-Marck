@@ -38,4 +38,5 @@ api.post('/registrarJornada/:idLiga',[md_auth.Auth, md_roles.usuarios],controlad
 api.put('/agregarPartido/:idJornada',[md_auth.Auth, md_roles.usuarios],controladorJornadas.agregarPartido);
     /* Especificas del Usuario Tabla */
 api.get('/tablaGeneral/:idLiga',[md_auth.Auth, md_roles.usuarios], controladorJornadas.tablaGeneral);
+api.get('/tablaPdf/:idLiga',[md_auth.Auth, md_roles.usuarios], controladorJornadas.tablitaPdf);
 module.exports = api;

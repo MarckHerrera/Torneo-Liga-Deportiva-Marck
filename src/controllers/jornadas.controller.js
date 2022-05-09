@@ -1,6 +1,12 @@
 const Jornadas = require("../models/jornadas.model")
 const Equipos = require("../models/equipos.model");
+const Ligas = require("../models/ligas.model");
 const parse = require("nodemon/lib/cli/parse");
+const Pdfkit = require("pdfkit");
+const fs = require("fs");
+var doc = new Pdfkit();
+
+
 
 function registrarJornadas(req, res) {
     var modeloJornada = new Jornadas();
@@ -261,8 +267,82 @@ function tablaGeneral(req, res) {
 });
 }
 
+function tablitaPdf(req, res) {
+    var idLiga = req.params.idLiga;
+
+    Ligas.findOne({ _id: idLiga }, (err, ligaEncontrado) => {
+        const topY = 80;
+        const topX = 30;
+        const pX = 500;
+        const pY = 1000;
+    doc.rect(0, 0, doc.page.width, doc.page.height).fill('#A39FA7');
+    doc.fillColor("#891616").fontSize(32).text("Tabla de liga",topY,topX, {align: "center",bold: true,});
+    doc.rect(0, 150, pY, pX).fill('#FFFFFF');
+      doc
+        .fillColor("#891616")
+        .fontSize(32)
+        .text(ligaEncontrado.nombre, { align: "center", bold: true, underline: true })
+    })
+    Equipos.findOne({idUsuario: req.user.sub }, (err, equipoEncontrado) => {
+        
+        if (!equipoEncontrado){ 
+            return res.status(500).send({mensaje: "Este equipo no es tuyo"})
+            
+        } else {
+
+    Equipos.find({idLiga: idLiga },{idUsuario:0,_id:0,__v:0}, (err, equipoEncontrado) => {
+      
+        doc.pipe(fs.createWriteStream("pdfs/" + idLiga + ".pdf"));
+          const Top = 200;
+          const EquipoX = 50;
+          const palitoX = 300;
+          const pepeX = 300;
+          const PtsX = 350;
+          const GfX = 400;
+          const GcX = 450;
+          const df = 500;
+
+          doc
+            .fontSize(18)
+            .text("Equipos: " +equipoEncontrado.length, EquipoX, Top, {
+              bold: true,
+              underline: true,
+              
+            })
+            
+            .text("|", pepeX, Top, {bold: true,})
+            .text("Pts", PtsX, Top, {bold: true, underline: true,})
+            .text("GF", GfX, Top, { bold: true, underline: true })
+            .text("GC", GcX, Top, { bold: true, underline: true })
+            .text("DF", df, Top, { bold: true, underline: true });
+
+
+          let i = 0;
+          for (i = 0; i < equipoEncontrado.length; i++) {
+            const y = Top + 25 + i * 25;
+
+            doc.text(equipoEncontrado[i].nombre, EquipoX, y);
+            doc.text("|", palitoX, y);
+            doc.text(equipoEncontrado[i].puntuaje, PtsX, y);
+            doc.text(equipoEncontrado[i].golesAFavor, GfX, y);
+            doc.text(equipoEncontrado[i].golesEnContra, GcX, y);
+            doc.text(equipoEncontrado[i].diferenciaDeGoles, df, y);
+          }
+
+          
+        
+
+          doc.end();
+
+    }).sort({puntuaje:-1})
+}
+});
+return res.status(200).send("PDF Generado");
+}
+
 module.exports = {
     registrarJornadas,
     agregarPartido,
-    tablaGeneral
+    tablaGeneral,
+    tablitaPdf
 }
